@@ -1,0 +1,150 @@
+# ─────────────────────────────────────────────────────────
+# Lumen — Local Universal Memory Extraction Node
+# Copyright 2026 Mycosa — wu-reasoning.com
+# Attribution required. Commercial use requires permission.
+# ─────────────────────────────────────────────────────────
+
+# ─────────────────────────────────────────────────────────
+# LUMEN — Local Universal Memory Extraction Node
+# Configuration File v0.1
+# ─────────────────────────────────────────────────────────
+# Place this file in your Lumen root directory.
+# All paths can be absolute or relative to this file.
+
+
+# ─────────────────────────────────────────────────────────
+# SERVER
+# ─────────────────────────────────────────────────────────
+server:
+  port: 8000
+  admin_token: "change-this-to-a-secret-value"  # CHANGE THIS
+  default_access_level: 1     # Access level for unauthenticated requests
+  # Access levels:
+  #   1 = public    (general knowledge, open facts)
+  #   2 = internal  (project details, decisions, preferences)
+  #   3 = confidential (sensitive, restricted)
+
+
+# ─────────────────────────────────────────────────────────
+# MODELS
+# ─────────────────────────────────────────────────────────
+models:
+  extractor: "llama3.2:3b"        # Fast model for per-exchange extraction
+  summarizer: "llama3.1:8b"       # Deeper model for nightly summaries
+  scanner: "llama3.2:3b"          # Model used for speed scan (can be same as extractor)
+  chat: "llama3.1:8b"             # Model used for chat responses
+  provider: "ollama"              # ollama | openai | anthropic (future)
+  ollama_host: "http://localhost:11434"
+
+
+# ─────────────────────────────────────────────────────────
+# INPUT SOURCES
+# ─────────────────────────────────────────────────────────
+inputs:
+
+  # Plain text, markdown, or chat export files
+  files:
+    enabled: true
+    paths:
+      - "./documents"             # Folder (all .txt, .md files inside)
+      # - "./chats/export.txt"    # Single file example
+    formats: ["txt", "md", "json"]
+    recursive: false              # Scan subfolders too
+
+  # PDF documents
+  pdfs:
+    enabled: true
+    paths:
+      - "./pdfs"
+    recursive: false
+
+  # Websites — periodically fetched and checked for new content
+  websites:
+    enabled: false
+    urls:
+      # - "https://example.com/blog"
+      # - "https://docs.someproject.org"
+    check_interval_hours: 24      # How often to re-check each URL
+    max_depth: 1                  # 1 = single page only, 2 = follow links one level
+
+
+# ─────────────────────────────────────────────────────────
+# SPEED SCAN
+# ─────────────────────────────────────────────────────────
+speed_scan:
+  enabled: true                   # Run quick context scan before deep ingestion
+  lines_per_chunk: 50             # How many lines per chunk during scan
+  max_chunks: 20                  # Max chunks to scan (keeps it fast)
+  # Speed scan builds a quick context map:
+  # - Main topics and domain
+  # - Key entities (people, projects, concepts)
+  # - Language and tone
+  # This context is available to your AI immediately,
+  # before deep extraction completes.
+
+
+# ─────────────────────────────────────────────────────────
+# INGESTION
+# ─────────────────────────────────────────────────────────
+ingestion:
+  pages_per_hour: 10              # Pacing — how many pages (100 lines) per hour
+  page_size_lines: 100            # Lines per page
+  resume: true                    # Resume from last position if interrupted
+  state_file: ".lumen_state.json" # Tracks ingestion progress
+
+
+# ─────────────────────────────────────────────────────────
+# EXTRACTION
+# ─────────────────────────────────────────────────────────
+extraction:
+  # Memory types to extract
+  # Remove types you don't need for your domain
+  memory_types:
+    - fact          # Objective truths about the subject matter
+    - preference    # How the user or subject likes things done
+    - rule          # Constraints or behavioral directives
+    - decision      # Choices made that should be remembered
+    - reminder      # Things to follow up on
+
+  # Domain context — helps the extractor understand what matters
+  # Describe your use case in plain language
+  domain: "general"
+  domain_description: >
+    General purpose knowledge extraction.
+    Replace this with a description of your specific domain,
+    e.g. 'Legal research for contract law' or
+    'Internal company knowledge base for a software team'.
+
+  # Confidence thresholds
+  auto_promote_threshold: 0.85    # Auto-promote memories above this confidence
+  min_store_threshold: 0.50       # Don't store memories below this confidence
+
+  # Extraction limits per exchange
+  max_memories_per_chunk: 3
+
+
+# ─────────────────────────────────────────────────────────
+# NIGHTLY SUMMARY
+# ─────────────────────────────────────────────────────────
+nightly_summary:
+  enabled: true
+  run_between_hours: [23, 2]      # Run between 11pm and 2am
+  summary_length_words: 200       # Target summary length
+
+
+# ─────────────────────────────────────────────────────────
+# STORAGE
+# ─────────────────────────────────────────────────────────
+storage:
+  database: "./lumen_memory.db"   # SQLite database path
+  export_json: false              # Also export memories as JSON (for inspection)
+  export_path: "./lumen_export.json"
+
+
+# ─────────────────────────────────────────────────────────
+# LOGGING
+# ─────────────────────────────────────────────────────────
+logging:
+  level: "info"                   # debug | info | warning | error
+  log_file: "./lumen.log"
+  print_to_console: true
