@@ -1,0 +1,36 @@
+LUMEN — Local Universal Memory Extraction Node
+Copyright 2026 Mycosa. All rights reserved.
+
+TERMS OF USE
+
+1. ATTRIBUTION
+   You may use, study, modify, and run this software for personal and
+   non-commercial purposes, provided that this copyright notice and
+   clear attribution to the original author (Mycosa / wu-reasoning.com)
+   are retained in all copies, modified versions, and derivative works.
+
+2. COMMERCIAL USE
+   Commercial use of this software — including but not limited to
+   incorporation into commercial products or services, use in a paid
+   offering, use within an organisation for commercial benefit, or
+   sublicensing — requires prior written permission from the author.
+   Contact: wu-reasoning.com
+
+3. NO REBRANDING
+   You may not remove, alter, or obscure the name "Lumen", the
+   attribution to Mycosa, or the link to wu-reasoning.com in any
+   distributed or deployed version of this software without prior
+   written permission.
+
+4. NO WARRANTY
+   This software is provided "as is", without warranty of any kind,
+   express or implied. The author is not liable for any damages arising
+   from the use of this software.
+
+5. CONTRIBUTIONS
+   Contributions, pull requests, and issue reports are welcome.
+   By submitting a contribution you agree that it may be incorporated
+   into the project under these same license terms.
+
+For commercial licensing, research collaboration, or integration
+partnerships: wu-reasoning.com
